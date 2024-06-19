@@ -1,11 +1,3 @@
-# Les tornades semblent se déplacer vers la côte est, sur la vallée du fleuve du Mississippi.
-# C'est ce qu'on appelle la Dixie Alley : Arkansas, Mississippi, Louisiane, Tennessee, Alabama, Géorgie.
-# 
-# Pleinement intégrés : AR, MI, LA 
-# Partiellement : TN, AL, GA (toutes à l'est)
-# 
-# On constate l'augmentation des tornades à l'est
-
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
@@ -25,28 +17,27 @@ df_filtered = df_tornadoes[(df_tornadoes['st'].isin(states)) & (df_tornadoes['ye
 # Grouper les données par année pour chaque état
 tornadoes_per_year = df_filtered.groupby(['year', 'st']).size().reset_index(name='tornado_count')
 
+# Calculer la moyenne des tornades par année pour les états sélectionnés
+mean_tornadoes_per_year = tornadoes_per_year.groupby('year')['tornado_count'].mean().reset_index(name='mean_tornado_count')
+
 def generate_tornado_count_graph_dixie():
-    filtered_df = tornadoes_per_year    
+    filtered_df = mean_tornadoes_per_year    
 
     fig = go.Figure()
 
-    # Ajouter les courbes pour chaque état
-    i = 0
-    for state in states:
-        state_df = filtered_df[filtered_df['st'] == state]
-        fig.add_trace(go.Scatter(
-            x=state_df['year'],
-            y=state_df['tornado_count'],
-            mode='lines+markers',
-            name=f'Nombre de Tornades ({states_names[i]})',
-            line=dict(shape='linear')
-        ))
-        i += 1
+    # Ajouter la courbe de la moyenne des tornades
+    fig.add_trace(go.Scatter(
+        x=filtered_df['year'],
+        y=filtered_df['mean_tornado_count'],
+        mode='lines+markers',
+        name='Moyenne des Tornades (AR, TN, AL, GA)',
+        line=dict(shape='linear')
+    ))
 
     fig.update_layout(
-        title="Nombre de Tornades par État (1980 - 2021)",
+        title="Moyenne du Nombre de Tornades par Année (1980 - 2021)",
         xaxis_title="Année",
-        yaxis_title="Nombre de Tornades",
+        yaxis_title="Nombre de Tornades Moyenne",
         legend=dict(
             x=1.1,  
             y=0.5  

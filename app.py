@@ -19,16 +19,14 @@ import pandas as pd
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = dbc.Container([
-    html.H1("L'Impact du Réchauffement Climatique sur les Tornades aux USA", className='text-center mt-5 mb-4'),
+    html.H1("Le réchauffement climatique a-t-il un impact sur les tornades aux USA", className='text-center mt-5 mb-4'),
     html.H3("Analyse des tendances et des déplacements des tornades dans Tornado Alley", className='text-center mb-5'),
 
     html.H2("Sommaire", className='mb-4'),
     dbc.ListGroup([
         dbc.ListGroupItem("1 - Contexte"),
         dbc.ListGroupItem("2 - Tendances et Changements Récents"),
-        dbc.ListGroupItem("3 - Impact des Nouvelles Technologies"),
-        dbc.ListGroupItem("4 - Analyse du Réchauffement Climatique"),
-        dbc.ListGroupItem("5 - Conclusion")
+        dbc.ListGroupItem("3 - Conclusion")
     ], flush=True),
 
     html.H2("1 - Contexte", className='mb-4 mt-5 text-center'),
@@ -86,26 +84,12 @@ app.layout = dbc.Container([
     ], md=6, className='mx-auto'),
 
     dbc.Col([
-        html.H4("Nombre de Tornades par État dans la Tornado Alley - Est"),
-        dcc.Graph(id='tornado-count-graph-east'),
-    ], md=6, className='mx-auto'),
-
-    dbc.Col([
-        html.H4("Nombre de Tornades par État dans la Dixie Alley"),
-        dcc.Graph(id='tornado-count-graph-dixie'),
-    ], md=6, className='mx-auto'),
-
-    dbc.Col([
-        html.H4("Température Moyenne par État dans la Tornado Alley"),
+        html.H4("Température Moyenne dans les régions de tornades"),
         dcc.Graph(id='temperature-graph-tornado'),
     ], md=6, className='mx-auto'),
 
     dbc.Col([
-        html.H4("Température Moyenne par État dans la Dixie Alley"),
-        dcc.Graph(id='temperature-graph-dixie'),
-    ], md=6, className='mx-auto'),
-    dbc.Col([
-        html.H4("Évolution de la magnétude de Tornades par État dans la Tornado Alley - Ouest (1980 - 2021)"),
+        html.H4("Évolution du coefficient des tornades par État dans la Tornado Alley - Ouest (1980 - 2021)"),
         dcc.Dropdown(
             id='state-dropdown',
             options=[{'label': state, 'value': state} for state in states],
@@ -114,7 +98,7 @@ app.layout = dbc.Container([
             style={'width': '50%'} 
         ),
         dcc.Graph(id='mag-count-graph-west'),
-        html.H4("Évolution de la magnétude de Tornades par État dans la Dixie Alley (1980 - 2021)"),
+        html.H4("Évolution du coefficient des tornades par État dans la Dixie Alley (1980 - 2021)"),
         dcc.Dropdown(
             id='state-dropdown2',
             options=[{'label': state, 'value': state} for state in states_dixie],
@@ -125,20 +109,12 @@ app.layout = dbc.Container([
         dcc.Graph(id='mag-count-graph-dixie')
     ], md=6, className='mx-auto'),
 
-
-    html.H2("3 - Impact des Nouvelles Technologies", className='mb-4 mt-5 text-center'),
     dbc.Col([
-        html.H4("Rôle des Technologies Modernes"),
-        dcc.Graph(id='tornado-tech-graph'),
         dcc.Store(id='dummy-input', data=0) 
     ], md=6, className='mx-auto'),
-    html.H2("4 - Analyse du Réchauffement Climatique", className='mb-4 mt-5 text-center'),
+    
     dbc.Col([
-        html.H4("Climat et Conditions Météorologiques"),
-        html.P("Graphique ou diagramme montrant les corrélations entre les emmissions de GES et l'augmentation des températures et l'augmetation des tornades'"),
-    ], md=6, className='mx-auto'),
-    dbc.Col([
-        html.H2("5 - Conclusion", className='mb-4 mt-5 text-center'),
+        html.H2("3 - Conclusion", className='mb-4 mt-5 text-center'),
         html.Img(src='assets/tornades-img.avif', className='img-fluid mx-auto d-block mb-500'),
     ], md=6, className='mx-auto mb-5'),
 ], fluid=True)
@@ -199,69 +175,11 @@ def update_heatmap(selected_decade):
     return fig
 
 @app.callback(
-    Output('tornado-tech-graph', 'figure'),
-    [Input('dummy-input', 'data')] 
-)
-def update_tornado_tech_graph(dummy_input):
-    df_tornadoes = pd.read_csv('us_tornado_dataset_1950_2021.csv')
-    df_avancees = pd.read_csv('avancee_techno.csv', on_bad_lines='skip')
-    df_avancees['yr'] = df_avancees['yr'].astype(int)
-
-    df_tornadoes['date'] = pd.to_datetime(df_tornadoes['date'])
-    df_tornadoes['year'] = df_tornadoes['date'].dt.year
-
-    tornadoes_per_year = df_tornadoes['year'].value_counts().sort_index()
-    bars = go.Bar(
-        x=tornadoes_per_year.index,
-        y=tornadoes_per_year.values,
-        name='Nombre de tornades'
-    )
-    markers = go.Scatter(
-        x=df_avancees['yr'],
-        y=[tornadoes_per_year.get(yr, None) for yr in df_avancees['yr']],
-        mode='markers',
-        marker=dict(size=10, color='red'),
-        hovertext=df_avancees['type'],
-        hoverinfo='text',
-        name='Avancées technologiques'
-    )
-    fig = go.Figure(data=[bars, markers])
-
-    fig.update_layout(
-        title='Nombre de tornades par année et avancées technologiques',
-        xaxis_title='Année',
-        yaxis_title='Nombre de tornades'
-    )
-
-    return fig
-
-@app.callback(
-    Output('tornado-count-graph-east', 'figure'),
-    [Input('dummy-input', 'data')]
-)
-def update_tornado_count_graph_east(dummy_input):
-    return generate_tornado_count_graph_east()
-
-@app.callback(
     Output('tornado-count-graph-west', 'figure'),
     [Input('dummy-input', 'data')]
 )
 def update_tornado_count_graph_west(dummy_input):
     return generate_tornado_count_graph_west()
-
-@app.callback(
-    Output('tornado-count-graph-dixie', 'figure'),
-    [Input('dummy-input', 'data')]
-)
-def update_tornado_count_graph_dixie(dummy_input):
-    return generate_tornado_count_graph_dixie()
-
-@app.callback(
-    Output('temperature-graph-dixie', 'figure'),
-    [Input('dummy-input', 'data')]
-)
-def update_temperature_graph_dixie(dummy_input):
-    return generate_temperature_graph_dixie()
 
 @app.callback(
     Output('temperature-graph-tornado', 'figure'),
