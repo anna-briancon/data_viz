@@ -88,7 +88,7 @@ app.layout = dbc.Container([
     ], md=6, className='mx-auto'),
 
     dbc.Col([
-        html.H4("Évolution du coefficient des tornades par État dans la Tornado Alley - Ouest (1980 - 2021)"),
+        html.H4("Évolution du coefficient des tornades dans la Tornado Alley"),
         dcc.Dropdown(
             id='state-dropdown',
             options=[{'label': state, 'value': state} for state in states],
@@ -98,7 +98,7 @@ app.layout = dbc.Container([
         ),
         dcc.Graph(id='mag-count-graph-west'),
 
-        html.H4("Évolution du coefficient des tornades par État dans la Dixie Alley (1980 - 2021)"),
+        html.H4("Évolution du coefficient des tornades dans la Dixie Alley"),
         dcc.Dropdown(
             id='state-dropdown2',
             options=[{'label': state, 'value': state} for state in states_dixie],
