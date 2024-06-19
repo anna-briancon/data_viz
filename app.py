@@ -8,6 +8,7 @@ from pages.localisation import df_heatmap
 from pages.tornado_alley_west import generate_tornado_count_graph_west
 from pages.tornado_alley_east import generate_tornado_count_graph_east
 from pages.puissance_tornado_alley_west import generate_mag_count_graph_west, states
+from pages.puissance_tornado_dixie import generate_mag_count_graph_dixie, states_dixie
 from pages.dixie_alley import generate_tornado_count_graph_dixie
 from pages.temp_dixie import generate_temperature_graph_dixie
 from pages.temp_tornado import generate_temperature_graph_tornado
@@ -112,8 +113,16 @@ app.layout = dbc.Container([
             clearable=False,
             style={'width': '50%'} 
         ),
-        
-        dcc.Graph(id='mag-count-graph-west')
+        dcc.Graph(id='mag-count-graph-west'),
+        html.H4("Évolution de la magnétude de Tornades par État dans la Dixie Alley (1980 - 2021)"),
+        dcc.Dropdown(
+            id='state-dropdown2',
+            options=[{'label': state, 'value': state} for state in states_dixie],
+            value=states[0],
+            clearable=False,
+            style={'width': '50%'} 
+        ),
+        dcc.Graph(id='mag-count-graph-dixie')
     ], md=6, className='mx-auto'),
 
 
@@ -270,6 +279,18 @@ def update_mag_count_graph_west(selected_state):
         raise dash.exceptions.PreventUpdate
     
     fig = generate_mag_count_graph_west(selected_state)
+    
+    return fig
+
+@app.callback(
+    Output('mag-count-graph-dixie', 'figure'),
+    [Input('state-dropdown2', 'value')]
+)
+def update_mag_count_graph_dixie(selected_state):
+    if selected_state is None:
+        selected_state = states_dixie[0]
+    
+    fig = generate_mag_count_graph_dixie(selected_state)
     
     return fig
 
