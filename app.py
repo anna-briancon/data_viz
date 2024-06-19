@@ -19,8 +19,7 @@ import pandas as pd
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = dbc.Container([
-    html.H1("Le réchauffement climatique a-t-il un impact sur les tornades aux USA", className='text-center mt-5 mb-4'),
-    html.H3("Analyse des tendances et des déplacements des tornades dans Tornado Alley", className='text-center mb-5'),
+    html.H1("Le réchauffement climatique a-t-il un impact sur les tornades aux USA ?", className='text-center mt-5 mb-4'),
 
     html.H2("Sommaire", className='mb-4'),
     dbc.ListGroup([
@@ -79,12 +78,12 @@ app.layout = dbc.Container([
     ], md=6, className='mx-auto'),
 
     dbc.Col([
-        html.H4("Nombre de Tornades par État dans la Tornado Alley - Ouest"),
+        html.H4("Nombre de tornades par région"),
         dcc.Graph(id='tornado-count-graph-west'),
     ], md=6, className='mx-auto'),
 
     dbc.Col([
-        html.H4("Température Moyenne dans les régions de tornades"),
+        html.H4("Température moyenne par région"),
         dcc.Graph(id='temperature-graph-tornado'),
     ], md=6, className='mx-auto'),
 
@@ -98,6 +97,7 @@ app.layout = dbc.Container([
             style={'width': '50%'} 
         ),
         dcc.Graph(id='mag-count-graph-west'),
+
         html.H4("Évolution du coefficient des tornades par État dans la Dixie Alley (1980 - 2021)"),
         dcc.Dropdown(
             id='state-dropdown2',
@@ -112,7 +112,7 @@ app.layout = dbc.Container([
     dbc.Col([
         dcc.Store(id='dummy-input', data=0) 
     ], md=6, className='mx-auto'),
-    
+
     dbc.Col([
         html.H2("3 - Conclusion", className='mb-4 mt-5 text-center'),
         html.Img(src='assets/tornades-img.avif', className='img-fluid mx-auto d-block mb-500'),
