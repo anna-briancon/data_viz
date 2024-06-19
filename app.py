@@ -7,6 +7,9 @@ from pages.freq_mensuelle import freq_df
 from pages.localisation import df_heatmap
 from pages.tornado_alley_west import generate_tornado_count_graph_west
 from pages.tornado_alley_east import generate_tornado_count_graph_east
+from pages.dixie_alley import generate_tornado_count_graph_dixie
+from pages.temp_dixie import generate_temperature_graph_dixie
+from pages.temp_tornado import generate_temperature_graph_tornado
 import plotly.graph_objs as go
 import plotly.express as px
 import pandas as pd
@@ -76,15 +79,30 @@ app.layout = dbc.Container([
     ], md=6, className='mx-auto'),
 
     dbc.Col([
-        html.H4("Évolution du Nombre de Tornades par État dans la Tornado Alley - Ouest (1980 - 2021)"),
+        html.H4("Nombre de Tornades par État dans la Tornado Alley - Ouest"),
         dcc.Graph(id='tornado-count-graph-west'),
     ], md=6, className='mx-auto'),
 
     dbc.Col([
-        html.H4("Évolution du Nombre de Tornades par État dans la Tornado Alley - Est (1980 - 2021)"),
+        html.H4("Nombre de Tornades par État dans la Tornado Alley - Est"),
         dcc.Graph(id='tornado-count-graph-east'),
     ], md=6, className='mx-auto'),
-    
+
+    dbc.Col([
+        html.H4("Nombre de Tornades par État dans la Dixie Alley"),
+        dcc.Graph(id='tornado-count-graph-dixie'),
+    ], md=6, className='mx-auto'),
+
+    dbc.Col([
+        html.H4("Température Moyenne par État dans la Tornado Alley"),
+        dcc.Graph(id='temperature-graph-tornado'),
+    ], md=6, className='mx-auto'),
+
+    dbc.Col([
+        html.H4("Température Moyenne par État dans la Dixie Alley"),
+        dcc.Graph(id='temperature-graph-dixie'),
+    ], md=6, className='mx-auto'),
+
     html.H2("3 - Impact des Nouvelles Technologies", className='mb-4 mt-5 text-center'),
     dbc.Col([
         html.H4("Rôle des Technologies Modernes"),
@@ -207,6 +225,27 @@ def update_tornado_count_graph_east(dummy_input):
 )
 def update_tornado_count_graph_west(dummy_input):
     return generate_tornado_count_graph_west()
+
+@app.callback(
+    Output('tornado-count-graph-dixie', 'figure'),
+    [Input('dummy-input', 'data')]
+)
+def update_tornado_count_graph_dixie(dummy_input):
+    return generate_tornado_count_graph_dixie()
+
+@app.callback(
+    Output('temperature-graph-dixie', 'figure'),
+    [Input('dummy-input', 'data')]
+)
+def update_temperature_graph_dixie(dummy_input):
+    return generate_temperature_graph_dixie()
+
+@app.callback(
+    Output('temperature-graph-tornado', 'figure'),
+    [Input('dummy-input', 'data')]
+)
+def update_temperature_graph_tornado(dummy_input):
+    return generate_temperature_graph_tornado()
 
 if __name__ == '__main__':
     app.run_server(debug=True)
