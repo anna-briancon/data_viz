@@ -7,6 +7,7 @@ from pages.freq_mensuelle import freq_df
 from pages.localisation import df_heatmap
 from pages.tornado_alley_west import generate_tornado_count_graph_west
 from pages.tornado_alley_east import generate_tornado_count_graph_east
+from pages.puissance_tornado_alley_west import generate_mag_count_graph_west, states
 import plotly.graph_objs as go
 import plotly.express as px
 import pandas as pd
@@ -83,6 +84,19 @@ app.layout = dbc.Container([
     dbc.Col([
         html.H4("Évolution du Nombre de Tornades par État dans la Tornado Alley - Est (1980 - 2021)"),
         dcc.Graph(id='tornado-count-graph-east'),
+    ], md=6, className='mx-auto'),
+
+    dbc.Col([
+        html.H4("Évolution de la magnétude de Tornades par État dans la Tornado Alley - Ouest (1980 - 2021)"),
+        dcc.Dropdown(
+            id='state-dropdown',
+            options=[{'label': state, 'value': state} for state in states],
+            value=states[0],
+            clearable=False,
+            style={'width': '50%'} 
+        ),
+        
+        dcc.Graph(id='mag-count-graph-west')
     ], md=6, className='mx-auto'),
     
     html.H2("3 - Impact des Nouvelles Technologies", className='mb-4 mt-5 text-center'),
@@ -207,6 +221,18 @@ def update_tornado_count_graph_east(dummy_input):
 )
 def update_tornado_count_graph_west(dummy_input):
     return generate_tornado_count_graph_west()
+
+@app.callback(
+    Output('mag-count-graph-west', 'figure'),
+    [Input('state-dropdown', 'value')]
+)
+def update_mag_count_graph_west(selected_state):
+    if selected_state is None:
+        raise dash.exceptions.PreventUpdate
+    
+    fig = generate_mag_count_graph_west(selected_state)
+    
+    return fig
 
 if __name__ == '__main__':
     app.run_server(debug=True)
