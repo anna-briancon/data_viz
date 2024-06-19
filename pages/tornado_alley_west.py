@@ -1,19 +1,3 @@
-import dash
-from dash import dcc, html
-from dash.dependencies import Input, Output
-import pandas as pd
-import plotly.graph_objs as go
-
-# Charger et filtrer les données pour les tornades
-df_tornadoes = pd.read_csv('us_tornado_dataset_1950_2021.csv')
-df_tornadoes['date'] = pd.to_datetime(df_tornadoes['date'])
-df_tornadoes['year'] = df_tornadoes['date'].dt.year
-
-# Filtrer les données pour chaque état à partir de 1980
-
-
-#
-#
 # Tradtionnellement, la région la plus connue pour ses tornades est la Tornado Alley.
 # Pleinement intégrés : Oklahoma, Kansas, Arkansas, Iowa, Missouri
 # Partiellement intégrés : Texas, Colorado, Minnesota, Dakota du Sud, Illinois, Indiana, Nebrasqua
@@ -25,39 +9,23 @@ df_tornadoes['year'] = df_tornadoes['date'].dt.year
 # INTEGRES states = ['OK', 'KS', 'AR', 'IA', 'MO']
 # PARTIELS states = ['TX', 'CO', 'MN', 'SD', 'IL', 'IN', 'NE']
 
-states = ['OK', 'KS', 'AR', 'IA', 'MO', 'TX', 'CO', 'MN', 'SD', 'IL', 'IN', 'NE']
+import pandas as pd
+import plotly.graph_objs as go
 
+# Charger les données
+df_tornadoes = pd.read_csv('us_tornado_dataset_1950_2021.csv')
+df_tornadoes['date'] = pd.to_datetime(df_tornadoes['date'])
+df_tornadoes['year'] = df_tornadoes['date'].dt.year
+
+# Filtrer les données pour chaque état à partir de 1980
+states = ['CO', 'NE', 'OK', 'KS', 'TX']
 df_filtered = df_tornadoes[(df_tornadoes['st'].isin(states)) & (df_tornadoes['year'] >= 1980)]
 
 # Grouper les données par année pour chaque état
 tornadoes_per_year = df_filtered.groupby(['year', 'st']).size().reset_index(name='tornado_count')
 
-app = dash.Dash(__name__)
-
-app.layout = html.Div([
-    html.H1("Évolution du Nombre de Tornades par État dans la Tornado Alley (1980 - 2021)"),
-    
-    html.Label("Sélectionner une option"),
-    dcc.Dropdown(
-        id='decade-dropdown',
-        options=[
-            {'label': f'{i}s', 'value': i} for i in range(1980, 2030, 10)
-        ] + [{'label': 'Toutes les décennies', 'value': 'all'}],
-        value='all'
-    ),
-    
-    dcc.Graph(id='tornado-count-graph')
-])
-
-@app.callback(
-    Output('tornado-count-graph', 'figure'),
-    Input('decade-dropdown', 'value')
-)
-def update_tornado_count_graph(selected_decade):
-    if selected_decade == 'all':
-        filtered_df = tornadoes_per_year
-    else:
-        filtered_df = tornadoes_per_year[(tornadoes_per_year['year'] >= selected_decade) & (tornadoes_per_year['year'] < selected_decade + 10)]
+def generate_tornado_count_graph_west():
+    filtered_df = tornadoes_per_year
     
     fig = go.Figure()
 
@@ -83,6 +51,3 @@ def update_tornado_count_graph(selected_decade):
     )
 
     return fig
-
-if __name__ == '__main__':
-    app.run_server(debug=True)

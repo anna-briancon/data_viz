@@ -20,11 +20,10 @@ df_tornadoes['year'] = df_tornadoes['date'].dt.year
 # Pleinement intégrés : AR, MI, LA 
 # Partiellement : TN, AL, GA (toutes à l'est)
 # 
-# Masquer AR, MI, LA pour constater l'évolution vers l'est
 # On constate l'augmentation des tornades à l'est
 #
 #
-states = ['AR', 'MI', 'LA', 'TN', 'AL', 'GA']
+states = ['AR', 'LA', 'TN', 'AL', 'GA']
 df_filtered = df_tornadoes[(df_tornadoes['st'].isin(states)) & (df_tornadoes['year'] >= 1980)]
 
 # Grouper les données par année pour chaque état
